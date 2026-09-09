@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: volwipe
+  namespace: crudfullstack
+spec:
+  securityContext:
+    runAsUser: 0
+  restartPolicy: Never
+  containers:
+    - name: volwipe
+      image: busybox:latest
+      command: ["/bin/sh", "-c", "rm -rf /mnt/* /mnt/.[!.]* ; echo wipe-ok"]
+      volumeMounts:
+        - name: v
+          mountPath: /mnt
+  volumes:
+    - name: v
+      persistentVolumeClaim:
+        claimName: oracle-data-oracle-0

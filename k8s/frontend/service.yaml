@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: crudfullstack
+spec:
+  selector:
+    app: frontend
+  ports:
+    - port: 4200
+      targetPort: 80
+  type: LoadBalancer

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: crudfullstack
+data:
+  DB_HOST: db
+  DB_PORT: "1522"
+  DB_USERNAME: system
+  DB_PASSWORD: tu_password
+  SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: "600000"
