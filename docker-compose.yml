@@ -1,0 +1,45 @@
+version: '3'
+services:
+  db:
+    image: gvenzl/oracle-xe
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-tu_password}
+    ports:
+      - "1522:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 1521
+      DB_USERNAME: system
+      DB_PASSWORD: ${ORACLE_PASSWORD:-tu_password}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend-crud
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+  jenkins:
+    build: ./jenkins
+    container_name: jenkins
+    user: root
+    ports:
+      - "8088:8080"
+      - "50000:50000"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
+  oracle_data:

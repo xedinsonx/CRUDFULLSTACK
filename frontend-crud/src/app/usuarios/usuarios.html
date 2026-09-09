@@ -1,0 +1,64 @@
+<main class="dashboard">
+	<header class="hero">
+		<div>
+			<p class="eyebrow">DIRECTORIO / CONTROL</p>
+			<h1>Usuarios</h1>
+			<p class="intro">Gestiona los accesos y perfiles de tu equipo desde un solo lugar.</p>
+		</div>
+		<button class="button button-outline" type="button" (click)="listar()">Listar usuarios</button>
+	</header>
+
+	<section class="workspace">
+		<div class="section-heading">
+			<div>
+				<p class="eyebrow">REGISTROS ACTIVOS</p>
+				<h2>{{ usuarios.length }} usuarios</h2>
+			</div>
+				<div class="list-actions">
+					<span class="status-dot">Sincronizado</span>
+					<button class="button button-danger" type="button" (click)="eliminarSeleccionados()">Eliminar seleccionados</button>
+				</div>
+		</div>
+
+		<ul class="user-list">
+			<li class="user-card" *ngFor="let usuario of usuarios">
+				<label class="select-user" aria-label="Seleccionar usuario">
+					<input type="checkbox" [(ngModel)]="usuario.seleccionado">
+				</label>
+				<div class="user-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</div>
+				<div class="user-details">
+					<h3>{{ usuario.nombre }}</h3>
+					<p>{{ usuario.correo }}</p>
+					<span class="role-tag">{{ usuario.rol }}</span>
+				</div>
+				<div class="card-actions">
+					<button class="button button-secondary" type="button" (click)="usuario.id !== undefined && editar(usuario)">Actualizar</button>
+					<button class="button button-danger" type="button" (click)="usuario.id !== undefined && eliminar(usuario.id)">Eliminar</button>
+				</div>
+			</li>
+			<li class="empty-state" *ngIf="usuarios.length === 0">
+				<strong>Aún no hay usuarios</strong>
+				<span>Los registros creados aparecerán aquí.</span>
+			</li>
+		</ul>
+	</section>
+
+	<section class="form-panel">
+		<div class="form-heading">
+			<p class="eyebrow">{{ usuarioEditandoId === null ? 'NUEVO REGISTRO' : 'EDITANDO REGISTRO' }}</p>
+			<h2>{{ usuarioEditandoId === null ? 'Crear usuario' : 'Actualizar usuario' }}</h2>
+		</div>
+		<div class="form-grid">
+			<label>Nombre<input [(ngModel)]="nuevoUsuario.nombre" placeholder="Ej. Ana García"></label>
+			<label>Correo<input [(ngModel)]="nuevoUsuario.correo" placeholder="ana@empresa.com"></label>
+			<label>Rol<input [(ngModel)]="nuevoUsuario.rol" placeholder="Ej. Administrador"></label>
+			<label class="active-field"><input type="checkbox" [(ngModel)]="nuevoUsuario.activo"> Usuario activo</label>
+		</div>
+		<div class="form-actions">
+			<button class="button button-primary" type="button" *ngIf="usuarioEditandoId === null" (click)="crear()">Crear usuario</button>
+			<button class="button button-primary" type="button" *ngIf="usuarioEditandoId !== null" (click)="actualizar()">Guardar cambios</button>
+			<button class="button button-quiet" type="button" *ngIf="usuarioEditandoId !== null" (click)="cancelarEdicion()">Cancelar</button>
+		</div>
+		<p class="message" *ngIf="mensaje">{{ mensaje }}</p>
+	</section>
+</main>

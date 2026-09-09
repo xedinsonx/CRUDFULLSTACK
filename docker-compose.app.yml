@@ -1,0 +1,31 @@
+services:
+  db:
+    image: gvenzl/oracle-xe
+    environment:
+      ORACLE_PASSWORD: ${ORACLE_PASSWORD:-tu_password}
+    ports:
+      - "1522:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+
+  backend:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 1521
+      DB_USERNAME: system
+      DB_PASSWORD: ${ORACLE_PASSWORD:-tu_password}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend-crud
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+
+volumes:
+  oracle_data:
