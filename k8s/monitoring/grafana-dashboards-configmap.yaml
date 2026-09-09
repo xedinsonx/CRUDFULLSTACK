@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+data:
+  springboot-jvm.json: |
+    {
+      "id": null,
+      "uid": "springboot-jvm",
+      "title": "Spring Boot / JVM + Nodo",
+      "tags": ["java", "spring", "kubernetes"],
+      "timezone": "browser",
+      "refresh": "30s",
+      "schemaVersion": 39,
+      "version": 1,
+      "time": { "from": "now-30m", "to": "now" },
+      "panels": [
+        { "id": 1, "type": "stat", "title": "Heap usado", "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "jvm_memory_used_bytes{area=\"heap\"}", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "decmbytes" } } },
+        { "id": 2, "type": "stat", "title": "No-heap usado", "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "jvm_memory_used_bytes{area=\"nonheap\"}", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "decmbytes" } } },
+        { "id": 3, "type": "stat", "title": "Hilos vivos", "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "jvm_threads_live_threads", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "short" } } },
+        { "id": 4, "type": "stat", "title": "CPU sistema", "gridPos": { "h": 4, "w": 4, "x": 0, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "system_cpu_usage", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "percentunit" } } },
+        { "id": 5, "type": "stat", "title": "CPU proceso", "gridPos": { "h": 4, "w": 4, "x": 4, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "process_cpu_usage", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "percentunit" } } },
+        { "id": 6, "type": "stat", "title": "Uptime", "gridPos": { "h": 4, "w": 4, "x": 8, "y": 4 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "process_uptime_seconds", "refId": "A" }],
+          "fieldConfig": { "defaults": { "unit": "s" } } },
+        { "id": 7, "type": "timeseries", "title": "HTTP peticiones/seg", "gridPos": { "h": 6, "w": 12, "x": 0, "y": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "rate(http_server_requests_seconds_count[5m])", "refId": "A" }] },
+        { "id": 8, "type": "timeseries", "title": "Pool Hikari (activa)", "gridPos": { "h": 6, "w": 12, "x": 12, "y": 8 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "hikaricp_connections_active", "refId": "A" }] },
+        { "id": 9, "type": "timeseries", "title": "Memoria JVM", "gridPos": { "h": 6, "w": 12, "x": 0, "y": 14 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "sum by (area) (jvm_memory_used_bytes{area!=~\"nonheap\"})", "refId": "A" }] },
+        { "id": 10, "type": "timeseries", "title": "GC pausas/seg", "gridPos": { "h": 6, "w": 12, "x": 12, "y": 14 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "sum(rate(jvm_gc_pause_seconds_count[5m]))", "refId": "A" }] },
+        { "id": 11, "type": "timeseries", "title": "CPU nodo (%)", "gridPos": { "h": 6, "w": 12, "x": 0, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "100 - avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100", "refId": "A" }] },
+        { "id": 12, "type": "timeseries", "title": "Memoria nodo usada", "gridPos": { "h": 6, "w": 12, "x": 12, "y": 20 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [{ "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes", "refId": "A" }] }
+      ]
+    }
